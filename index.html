@@ -166,7 +166,7 @@
                     <input 
                         type="text" 
                         id="searchInput" 
-                        placeholder="Masukkan nama murid (min. 4 huruf)"
+                        placeholder="Masukkan nama murid atau nama kelas (min. 3 huruf)"
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none search-focus text-lg"
                     >
                     <button 
@@ -495,6 +495,66 @@
                     telefon: "012-8765432",
                     hubungan: "Ibu"
                 }
+            },
+            {
+                id: 3,
+                nama: "Muhammad Haziq bin Ismail",
+                kelas: "6 Bestari",
+                nokp: "120567-06-2345",
+                tarikhLahir: "8 April 2012",
+                alamat: "No. 789, Jalan Harmoni, Taman Indah, 94300 Kota Samarahan, Sarawak",
+                penjagaUtama: {
+                    nama: "Ismail bin Ahmad",
+                    nokp: "780456-13-7890",
+                    telefon: "014-3456789",
+                    hubungan: "Bapa"
+                },
+                penjagaKedua: {
+                    nama: "Noraini binti Mohd",
+                    nokp: "830789-13-1234",
+                    telefon: "017-6543210",
+                    hubungan: "Ibu"
+                }
+            },
+            {
+                id: 4,
+                nama: "Siti Nur Batrisyia binti Azman",
+                kelas: "6 Bestari",
+                nokp: "120890-06-3456",
+                tarikhLahir: "12 Jun 2012",
+                alamat: "No. 321, Jalan Ceria, Kampung Sejahtera, 94300 Kota Samarahan, Sarawak",
+                penjagaUtama: {
+                    nama: "Azman bin Sulaiman",
+                    nokp: "770234-13-5678",
+                    telefon: "019-4567890",
+                    hubungan: "Bapa"
+                },
+                penjagaKedua: {
+                    nama: "Rohani binti Ibrahim",
+                    nokp: "810567-13-9012",
+                    telefon: "013-7890123",
+                    hubungan: "Ibu"
+                }
+            },
+            {
+                id: 5,
+                nama: "Alif Danial bin Rosli",
+                kelas: "5 Cemerlang",
+                nokp: "130234-06-4567",
+                tarikhLahir: "3 September 2013",
+                alamat: "No. 654, Lorong Bahagia, Taman Mesra, 94300 Kota Samarahan, Sarawak",
+                penjagaUtama: {
+                    nama: "Rosli bin Mahmud",
+                    nokp: "760890-13-2345",
+                    telefon: "016-5678901",
+                    hubungan: "Bapa"
+                },
+                penjagaKedua: {
+                    nama: "Zainab binti Hassan",
+                    nokp: "800123-13-6789",
+                    telefon: "012-9012345",
+                    hubungan: "Ibu"
+                }
             }
         ];
 
@@ -540,7 +600,7 @@
         let isAdminLoggedIn = false;
         
         // Admin security settings
-        const ADMIN_PASSWORD = "icareskbr25"; // Tukar kata laluan ini untuk keselamatan
+        const ADMIN_PASSWORD = "admin123"; // Tukar kata laluan ini untuk keselamatan
         const LOGIN_ATTEMPTS_KEY = 'adminLoginAttempts';
         const LAST_ATTEMPT_KEY = 'lastLoginAttempt';
         const MAX_ATTEMPTS = 5;
@@ -669,35 +729,72 @@
         function searchStudents() {
             const query = searchInput.value.trim().toLowerCase();
             
-            if (query.length < 4) {
-                alert('Sila masukkan sekurang-kurangnya 4 huruf untuk carian.');
+            if (query.length < 3) {
+                alert('Sila masukkan sekurang-kurangnya 3 huruf untuk carian.');
                 return;
             }
 
+            // Search by student name or class
             const results = studentsData.filter(student => 
-                student.nama.toLowerCase().includes(query)
+                student.nama.toLowerCase().includes(query) || 
+                student.kelas.toLowerCase().includes(query)
             );
 
             if (results.length === 0) {
-                alert('Tiada murid dijumpai dengan nama tersebut.');
+                alert('Tiada murid atau kelas dijumpai dengan nama tersebut.');
                 return;
             }
 
             searchResultsData = results;
-            displaySearchResults(results);
+            
+            // Check if searching by class (multiple results with same class)
+            const isClassSearch = results.length > 1 && 
+                results.every(student => student.kelas.toLowerCase().includes(query));
+            
+            displaySearchResults(results, isClassSearch, query);
         }
 
-        function displaySearchResults(results) {
+        function displaySearchResults(results, isClassSearch = false, query = '') {
             studentList.innerHTML = '';
             
-            results.forEach(student => {
+            // Add header for class search results
+            if (isClassSearch) {
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 rounded-xl mb-4';
+                headerDiv.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                        </svg>
+                        <div>
+                            <h3 class="text-lg font-bold">Senarai Murid Kelas: ${results[0].kelas}</h3>
+                            <p class="text-indigo-100">Jumlah: ${results.length} orang murid</p>
+                        </div>
+                    </div>
+                `;
+                studentList.appendChild(headerDiv);
+            }
+            
+            results.forEach((student, index) => {
                 const studentCard = document.createElement('div');
                 studentCard.className = 'student-card bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-xl cursor-pointer border-2 border-transparent hover:border-blue-300';
+                
+                // Add numbering for class search
+                const numberBadge = isClassSearch ? `
+                    <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">
+                        ${index + 1}
+                    </div>
+                ` : '';
+                
                 studentCard.innerHTML = `
                     <div class="flex justify-between items-center">
-                        <div>
-                            <h4 class="font-bold text-gray-800">${student.nama}</h4>
-                            <p class="text-gray-600">Kelas: ${student.kelas}</p>
+                        <div class="flex items-center">
+                            ${numberBadge}
+                            <div>
+                                <h4 class="font-bold text-gray-800">${student.nama}</h4>
+                                <p class="text-gray-600">Kelas: ${student.kelas}</p>
+                                <p class="text-gray-500 text-sm">No. KP: ${student.nokp}</p>
+                            </div>
                         </div>
                         <div class="text-blue-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -710,6 +807,14 @@
                 studentCard.addEventListener('click', () => showStudentDetails(student));
                 studentList.appendChild(studentCard);
             });
+
+            // Update results header
+            const resultsHeader = document.querySelector('#searchResults h3');
+            if (isClassSearch) {
+                resultsHeader.textContent = `Keputusan Carian Kelas`;
+            } else {
+                resultsHeader.textContent = `Keputusan Carian`;
+            }
 
             searchSection.classList.add('hidden');
             searchResults.classList.remove('hidden');
@@ -1085,5 +1190,5 @@
         // Initialize
         updateStats();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984f3627c7388e0c',t:'MTc1ODg1MjQ4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984f635402352203',t:'MTc1ODg1NDMzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
