@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maklumat Murid - SK Balai Ringin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #e0f2fe 0%, #f3e5f5 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .search-focus:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .student-card:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        
+        .info-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+        }
+        
+        .form-input {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .import-guide {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 2px dashed #0ea5e9;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Header -->
+    <div class="bg-white card-shadow">
+        <div class="max-w-6xl mx-auto px-6 py-6">
+            <div class="flex items-center gap-6">
+                <!-- Logo Placeholder -->
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                    </svg>
+                </div>
+                
+                <!-- School Name -->
+                <div>
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        SK BALAI RINGIN
+                    </h1>
+                    <p class="text-gray-600 mt-1">Sistem Maklumat Murid</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-6xl mx-auto px-6 py-4">
+        <div class="flex gap-4 justify-center">
+            <button id="searchTab" class="tab-btn active px-6 py-2 rounded-lg font-semibold transition-all">
+                🔍 Carian Murid
+            </button>
+            <button id="adminTab" class="tab-btn bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-400 transition-all">
+                ⚙️ Panel Admin
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Content -->
+    <div id="searchContent" class="max-w-4xl mx-auto px-6 py-8">
+        <!-- Search Section -->
+        <div id="searchSection" class="bg-white rounded-2xl card-shadow p-8 mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Carian Maklumat Murid</h2>
+            
+            <div class="max-w-md mx-auto">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Masukkan nama murid (min. 4 huruf)"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none search-focus text-lg"
+                    >
+                    <button 
+                        id="searchBtn"
+                        class="absolute right-2 top-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 font-semibold"
+                    >
+                        CARI
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="searchResults" class="hidden bg-white rounded-2xl card-shadow p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Keputusan Carian</h3>
+            <div id="studentList" class="space-y-3"></div>
+            <button id="backToSearch" class="mt-4 bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                KEMBALI KE CARIAN
+            </button>
+        </div>
+
+        <!-- Student Details -->
+        <div id="studentDetails" class="hidden bg-white rounded-2xl card-shadow p-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Maklumat Murid</h3>
+            
+            <!-- Basic Info -->
+            <div id="basicInfo" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Info will be populated here -->
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex gap-4 mb-6">
+                <button id="guardianInfoBtn" class="bg-gradient-to-r from-green-500 to-teal-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-teal-700 transition-all duration-300 font-semibold">
+                    Maklumat Penjaga
+                </button>
+                <button id="backToResults" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors font-semibold">
+                    KEMBALI
+                </button>
+            </div>
+        </div>
+
+        <!-- Guardian Details -->
+        <div id="guardianDetails" class="hidden bg-white rounded-2xl card-shadow p-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Maklumat Penjaga</h3>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Primary Guardian -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl">
+                    <h4 class="text-lg font-bold text-blue-800 mb-4">Penjaga Utama</h4>
+                    <div id="primaryGuardian" class="space-y-3">
+                        <!-- Guardian info will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Secondary Guardian -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl">
+                    <h4 class="text-lg font-bold text-purple-800 mb-4">Penjaga Kedua</h4>
+                    <div id="secondaryGuardian" class="space-y-3">
+                        <!-- Guardian info will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <button id="backToStudent" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors font-semibold">
+                KEMBALI
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Content -->
+    <div id="adminContent" class="hidden max-w-6xl mx-auto px-6 py-8">
+        <!-- Admin Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Stats Cards -->
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl card-shadow">
+                <h3 class="text-lg font-semibold mb-2">Jumlah Murid</h3>
+                <p id="totalStudents" class="text-3xl font-bold">0</p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-2xl card-shadow">
+                <h3 class="text-lg font-semibold mb-2">Murid Aktif</h3>
+                <p id="activeStudents" class="text-3xl font-bold">0</p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-2xl card-shadow">
+                <h3 class="text-lg font-semibold mb-2">Kelas</h3>
+                <p id="totalClasses" class="text-3xl font-bold">0</p>
+            </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="bg-white rounded-2xl card-shadow p-8 mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Pengurusan Data Murid</h2>
+            
+            <div class="flex flex-wrap gap-4 mb-6">
+                <button id="addStudentBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all font-semibold">
+                    ➕ Tambah Murid Baru
+                </button>
+                <button id="viewAllBtn" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all font-semibold">
+                    📋 Lihat Semua Murid
+                </button>
+                <button id="importBtn" class="bg-gradient-to-r from-teal-500 to-cyan-600 text-white px-6 py-3 rounded-lg hover:from-teal-600 hover:to-cyan-700 transition-all font-semibold">
+                    📥 Import Excel
+                </button>
+                <button id="exportBtn" class="bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-700 transition-all font-semibold">
+                    📤 Export Data
+                </button>
+                <button id="downloadTemplateBtn" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all font-semibold">
+                    📄 Template Excel
+                </button>
+                <input type="file" id="excelFileInput" accept=".xlsx,.xls" class="hidden">
+            </div>
+
+            <!-- Import Guide -->
+            <div id="importGuide" class="hidden import-guide p-6 rounded-xl mb-6">
+                <h3 class="text-lg font-bold text-blue-800 mb-4">📋 Panduan Import Excel</h3>
+                <div class="text-sm text-blue-700 space-y-2">
+                    <p><strong>Format Excel yang diperlukan:</strong></p>
+                    <div class="bg-white p-3 rounded border text-xs overflow-x-auto">
+                        <table class="w-full text-left">
+                            <tr class="bg-gray-100">
+                                <th class="p-1 border">Nama</th>
+                                <th class="p-1 border">Kelas</th>
+                                <th class="p-1 border">NoKP</th>
+                                <th class="p-1 border">TarikhLahir</th>
+                                <th class="p-1 border">Alamat</th>
+                                <th class="p-1 border">Penjaga1Nama</th>
+                                <th class="p-1 border">Penjaga1KP</th>
+                                <th class="p-1 border">Penjaga1Tel</th>
+                                <th class="p-1 border">Penjaga1Hubungan</th>
+                                <th class="p-1 border">Penjaga2Nama</th>
+                                <th class="p-1 border">Penjaga2KP</th>
+                                <th class="p-1 border">Penjaga2Tel</th>
+                                <th class="p-1 border">Penjaga2Hubungan</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <p><strong>Langkah-langkah:</strong></p>
+                    <ol class="list-decimal list-inside space-y-1">
+                        <li>Muat turun template Excel dengan klik butang "Template Excel"</li>
+                        <li>Isi maklumat murid mengikut format dalam template</li>
+                        <li>Simpan fail Excel anda</li>
+                        <li>Klik "Import Excel" dan pilih fail anda</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student List Management -->
+        <div id="studentListAdmin" class="hidden bg-white rounded-2xl card-shadow p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Senarai Semua Murid</h3>
+                <button id="closeListBtn" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                    ✕ Tutup
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Nama</th>
+                            <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Kelas</th>
+                            <th class="border border-gray-200 px-4 py-3 text-left font-semibold">No. KP</th>
+                            <th class="border border-gray-200 px-4 py-3 text-center font-semibold">Tindakan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminStudentTableBody">
+                        <!-- Student rows will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Add/Edit Student Form -->
+        <div id="studentForm" class="hidden bg-white rounded-2xl card-shadow p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="formTitle" class="text-2xl font-bold text-gray-800">Tambah Murid Baru</h3>
+                <button id="closeFormBtn" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                    ✕ Tutup
+                </button>
+            </div>
+
+            <form id="addStudentForm" class="space-y-6">
+                <!-- Student Basic Info -->
+                <div class="bg-blue-50 p-6 rounded-xl">
+                    <h4 class="text-lg font-bold text-blue-800 mb-4">Maklumat Asas Murid</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Penuh *</label>
+                            <input type="text" id="studentName" required class="form-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Kelas *</label>
+                            <input type="text" id="studentClass" required class="form-input w-full" placeholder="cth: 6 Bestari">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">No. Kad Pengenalan *</label>
+                            <input type="text" id="studentIC" required class="form-input w-full" placeholder="cth: 120345-06-1234">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Tarikh Lahir *</label>
+                            <input type="text" id="studentDOB" required class="form-input w-full" placeholder="cth: 15 Mac 2012">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Alamat *</label>
+                            <textarea id="studentAddress" required class="form-input w-full h-20" placeholder="Alamat penuh murid"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Primary Guardian -->
+                <div class="bg-green-50 p-6 rounded-xl">
+                    <h4 class="text-lg font-bold text-green-800 mb-4">Maklumat Penjaga Utama</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Penjaga *</label>
+                            <input type="text" id="guardian1Name" required class="form-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">No. Kad Pengenalan *</label>
+                            <input type="text" id="guardian1IC" required class="form-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">No. Telefon *</label>
+                            <input type="text" id="guardian1Phone" required class="form-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Hubungan *</label>
+                            <select id="guardian1Relation" required class="form-input w-full">
+                                <option value="">Pilih hubungan</option>
+                                <option value="Bapa">Bapa</option>
+                                <option value="Ibu">Ibu</option>
+                                <option value="Penjaga">Penjaga</option>
+                                <option value="Datuk">Datuk</option>
+                                <option value="Nenek">Nenek</option>
+                                <option value="Lain-lain">Lain-lain</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Guardian -->
+                <div class="bg-purple-50 p-6 rounded-xl">
+                    <h4 class="text-lg font-bold text-purple-800 mb-4">Maklumat Penjaga Kedua</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Penjaga</label>
+                            <input type="text" id="guardian2Name" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">No. Kad Pengenalan</label>
+                            <input type="text" id="guardian2IC" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">No. Telefon</label>
+                            <input type="text" id="guardian2Phone" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Hubungan</label>
+                            <select id="guardian2Relation" class="form-input w-full">
+                                <option value="">Pilih hubungan</option>
+                                <option value="Bapa">Bapa</option>
+                                <option value="Ibu">Ibu</option>
+                                <option value="Penjaga">Penjaga</option>
+                                <option value="Datuk">Datuk</option>
+                                <option value="Nenek">Nenek</option>
+                                <option value="Lain-lain">Lain-lain</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-3 rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all font-semibold">
+                        💾 Simpan Maklumat
+                    </button>
+                    <button type="button" id="resetFormBtn" class="bg-gray-500 text-white px-8 py-3 rounded-lg hover:bg-gray-600 transition-colors font-semibold">
+                        🔄 Reset Form
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample student data - this will be stored in localStorage
+        let studentsData = JSON.parse(localStorage.getItem('studentsData')) || [
+            {
+                id: 1,
+                nama: "Ahmad Faiz bin Abdullah",
+                kelas: "6 Bestari",
+                nokp: "120345-06-1234",
+                tarikhLahir: "15 Mac 2012",
+                alamat: "No. 123, Jalan Merdeka, Taman Sejahtera, 94300 Kota Samarahan, Sarawak",
+                penjagaUtama: {
+                    nama: "Abdullah bin Hassan",
+                    nokp: "801234-13-5678",
+                    telefon: "013-1234567",
+                    hubungan: "Bapa"
+                },
+                penjagaKedua: {
+                    nama: "Siti Aminah binti Omar",
+                    nokp: "850987-13-4321",
+                    telefon: "019-9876543",
+                    hubungan: "Ibu"
+                }
+            },
+            {
+                id: 2,
+                nama: "Nurul Aisyah binti Rahman",
+                kelas: "5 Cemerlang",
+                nokp: "130456-06-7890",
+                tarikhLahir: "22 Julai 2013",
+                alamat: "No. 456, Lorong Damai, Kampung Bahagia, 94300 Kota Samarahan, Sarawak",
+                penjagaUtama: {
+                    nama: "Rahman bin Ali",
+                    nokp: "790123-13-9876",
+                    telefon: "016-2345678",
+                    hubungan: "Bapa"
+                },
+                penjagaKedua: {
+                    nama: "Fatimah binti Yusof",
+                    nokp: "820654-13-3210",
+                    telefon: "012-8765432",
+                    hubungan: "Ibu"
+                }
+            }
+        ];
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('studentsData', JSON.stringify(studentsData));
+            updateStats();
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalStudents').textContent = studentsData.length;
+            document.getElementById('activeStudents').textContent = studentsData.length;
+            
+            const uniqueClasses = [...new Set(studentsData.map(s => s.kelas))];
+            document.getElementById('totalClasses').textContent = uniqueClasses.length;
+        }
+
+        // DOM elements
+        const searchTab = document.getElementById('searchTab');
+        const adminTab = document.getElementById('adminTab');
+        const searchContent = document.getElementById('searchContent');
+        const adminContent = document.getElementById('adminContent');
+        const searchSection = document.getElementById('searchSection');
+        const searchResults = document.getElementById('searchResults');
+        const studentDetails = document.getElementById('studentDetails');
+        const guardianDetails = document.getElementById('guardianDetails');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const studentList = document.getElementById('studentList');
+
+        // Admin elements
+        const studentForm = document.getElementById('studentForm');
+        const studentListAdmin = document.getElementById('studentListAdmin');
+        const addStudentForm = document.getElementById('addStudentForm');
+        const importGuide = document.getElementById('importGuide');
+        const excelFileInput = document.getElementById('excelFileInput');
+
+        // Current state
+        let currentStudent = null;
+        let searchResultsData = [];
+        let editingStudentId = null;
+
+        // Tab switching
+        searchTab.addEventListener('click', () => {
+            searchTab.classList.add('active');
+            adminTab.classList.remove('active');
+            searchContent.classList.remove('hidden');
+            adminContent.classList.add('hidden');
+        });
+
+        adminTab.addEventListener('click', () => {
+            adminTab.classList.add('active');
+            searchTab.classList.remove('active');
+            searchContent.classList.add('hidden');
+            adminContent.classList.remove('hidden');
+            updateStats();
+        });
+
+        // Search functionality
+        function searchStudents() {
+            const query = searchInput.value.trim().toLowerCase();
+            
+            if (query.length < 4) {
+                alert('Sila masukkan sekurang-kurangnya 4 huruf untuk carian.');
+                return;
+            }
+
+            const results = studentsData.filter(student => 
+                student.nama.toLowerCase().includes(query)
+            );
+
+            if (results.length === 0) {
+                alert('Tiada murid dijumpai dengan nama tersebut.');
+                return;
+            }
+
+            searchResultsData = results;
+            displaySearchResults(results);
+        }
+
+        function displaySearchResults(results) {
+            studentList.innerHTML = '';
+            
+            results.forEach(student => {
+                const studentCard = document.createElement('div');
+                studentCard.className = 'student-card bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-xl cursor-pointer border-2 border-transparent hover:border-blue-300';
+                studentCard.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-gray-800">${student.nama}</h4>
+                            <p class="text-gray-600">Kelas: ${student.kelas}</p>
+                        </div>
+                        <div class="text-blue-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+                
+                studentCard.addEventListener('click', () => showStudentDetails(student));
+                studentList.appendChild(studentCard);
+            });
+
+            searchSection.classList.add('hidden');
+            searchResults.classList.remove('hidden');
+        }
+
+        function showStudentDetails(student) {
+            currentStudent = student;
+            
+            const basicInfo = document.getElementById('basicInfo');
+            basicInfo.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <p class="info-label">Nama Penuh</p>
+                        <p class="info-value text-lg">${student.nama}</p>
+                    </div>
+                    <div>
+                        <p class="info-label">Kelas</p>
+                        <p class="info-value">${student.kelas}</p>
+                    </div>
+                    <div>
+                        <p class="info-label">No. Kad Pengenalan</p>
+                        <p class="info-value">${student.nokp}</p>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <p class="info-label">Tarikh Lahir</p>
+                        <p class="info-value">${student.tarikhLahir}</p>
+                    </div>
+                    <div>
+                        <p class="info-label">Alamat</p>
+                        <p class="info-value">${student.alamat}</p>
+                    </div>
+                </div>
+            `;
+
+            searchResults.classList.add('hidden');
+            studentDetails.classList.remove('hidden');
+        }
+
+        function showGuardianDetails() {
+            if (!currentStudent) return;
+
+            const primaryGuardian = document.getElementById('primaryGuardian');
+            const secondaryGuardian = document.getElementById('secondaryGuardian');
+
+            primaryGuardian.innerHTML = `
+                <div>
+                    <p class="info-label">Nama</p>
+                    <p class="info-value">${currentStudent.penjagaUtama.nama}</p>
+                </div>
+                <div>
+                    <p class="info-label">No. Kad Pengenalan</p>
+                    <p class="info-value">${currentStudent.penjagaUtama.nokp}</p>
+                </div>
+                <div>
+                    <p class="info-label">No. Telefon</p>
+                    <p class="info-value">${currentStudent.penjagaUtama.telefon}</p>
+                </div>
+                <div>
+                    <p class="info-label">Hubungan</p>
+                    <p class="info-value">${currentStudent.penjagaUtama.hubungan}</p>
+                </div>
+            `;
+
+            secondaryGuardian.innerHTML = `
+                <div>
+                    <p class="info-label">Nama</p>
+                    <p class="info-value">${currentStudent.penjagaKedua.nama || '-'}</p>
+                </div>
+                <div>
+                    <p class="info-label">No. Kad Pengenalan</p>
+                    <p class="info-value">${currentStudent.penjagaKedua.nokp || '-'}</p>
+                </div>
+                <div>
+                    <p class="info-label">No. Telefon</p>
+                    <p class="info-value">${currentStudent.penjagaKedua.telefon || '-'}</p>
+                </div>
+                <div>
+                    <p class="info-label">Hubungan</p>
+                    <p class="info-value">${currentStudent.penjagaKedua.hubungan || '-'}</p>
+                </div>
+            `;
+
+            studentDetails.classList.add('hidden');
+            guardianDetails.classList.remove('hidden');
+        }
+
+        // Admin Functions
+        function showAddStudentForm() {
+            editingStudentId = null;
+            document.getElementById('formTitle').textContent = 'Tambah Murid Baru';
+            resetForm();
+            studentForm.classList.remove('hidden');
+        }
+
+        function showEditStudentForm(student) {
+            editingStudentId = student.id;
+            document.getElementById('formTitle').textContent = 'Edit Maklumat Murid';
+            
+            // Populate form with student data
+            document.getElementById('studentName').value = student.nama;
+            document.getElementById('studentClass').value = student.kelas;
+            document.getElementById('studentIC').value = student.nokp;
+            document.getElementById('studentDOB').value = student.tarikhLahir;
+            document.getElementById('studentAddress').value = student.alamat;
+            
+            document.getElementById('guardian1Name').value = student.penjagaUtama.nama;
+            document.getElementById('guardian1IC').value = student.penjagaUtama.nokp;
+            document.getElementById('guardian1Phone').value = student.penjagaUtama.telefon;
+            document.getElementById('guardian1Relation').value = student.penjagaUtama.hubungan;
+            
+            document.getElementById('guardian2Name').value = student.penjagaKedua.nama || '';
+            document.getElementById('guardian2IC').value = student.penjagaKedua.nokp || '';
+            document.getElementById('guardian2Phone').value = student.penjagaKedua.telefon || '';
+            document.getElementById('guardian2Relation').value = student.penjagaKedua.hubungan || '';
+            
+            studentForm.classList.remove('hidden');
+        }
+
+        function resetForm() {
+            addStudentForm.reset();
+        }
+
+        function showAllStudents() {
+            const tbody = document.getElementById('adminStudentTableBody');
+            tbody.innerHTML = '';
+            
+            studentsData.forEach(student => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="border border-gray-200 px-4 py-3">${student.nama}</td>
+                    <td class="border border-gray-200 px-4 py-3">${student.kelas}</td>
+                    <td class="border border-gray-200 px-4 py-3">${student.nokp}</td>
+                    <td class="border border-gray-200 px-4 py-3 text-center">
+                        <button onclick="showEditStudentForm(studentsData.find(s => s.id === ${student.id}))" class="bg-blue-500 text-white px-3 py-1 rounded mr-2 hover:bg-blue-600 text-sm">
+                            ✏️ Edit
+                        </button>
+                        <button onclick="deleteStudent(${student.id})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm">
+                            🗑️ Padam
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            studentListAdmin.classList.remove('hidden');
+        }
+
+        function deleteStudent(id) {
+            if (confirm('Adakah anda pasti ingin memadam maklumat murid ini?')) {
+                studentsData = studentsData.filter(student => student.id !== id);
+                saveData();
+                showAllStudents();
+                alert('Maklumat murid telah dipadam.');
+            }
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(studentsData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'maklumat_murid_sk_balai_ringin.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Excel Import/Export Functions
+        function downloadTemplate() {
+            const templateData = [
+                {
+                    'Nama': 'Ahmad Faiz bin Abdullah',
+                    'Kelas': '6 Bestari',
+                    'NoKP': '120345-06-1234',
+                    'TarikhLahir': '15 Mac 2012',
+                    'Alamat': 'No. 123, Jalan Merdeka, Taman Sejahtera, 94300 Kota Samarahan, Sarawak',
+                    'Penjaga1Nama': 'Abdullah bin Hassan',
+                    'Penjaga1KP': '801234-13-5678',
+                    'Penjaga1Tel': '013-1234567',
+                    'Penjaga1Hubungan': 'Bapa',
+                    'Penjaga2Nama': 'Siti Aminah binti Omar',
+                    'Penjaga2KP': '850987-13-4321',
+                    'Penjaga2Tel': '019-9876543',
+                    'Penjaga2Hubungan': 'Ibu'
+                }
+            ];
+
+            const ws = XLSX.utils.json_to_sheet(templateData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template Murid");
+            XLSX.writeFile(wb, "template_maklumat_murid.xlsx");
+        }
+
+        function importExcel() {
+            importGuide.classList.remove('hidden');
+            excelFileInput.click();
+        }
+
+        function handleExcelFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                    let importedCount = 0;
+                    let errorCount = 0;
+
+                    jsonData.forEach((row, index) => {
+                        try {
+                            if (row.Nama && row.Kelas && row.NoKP) {
+                                const newStudent = {
+                                    id: Date.now() + index,
+                                    nama: row.Nama || '',
+                                    kelas: row.Kelas || '',
+                                    nokp: row.NoKP || '',
+                                    tarikhLahir: row.TarikhLahir || '',
+                                    alamat: row.Alamat || '',
+                                    penjagaUtama: {
+                                        nama: row.Penjaga1Nama || '',
+                                        nokp: row.Penjaga1KP || '',
+                                        telefon: row.Penjaga1Tel || '',
+                                        hubungan: row.Penjaga1Hubungan || ''
+                                    },
+                                    penjagaKedua: {
+                                        nama: row.Penjaga2Nama || '',
+                                        nokp: row.Penjaga2KP || '',
+                                        telefon: row.Penjaga2Tel || '',
+                                        hubungan: row.Penjaga2Hubungan || ''
+                                    }
+                                };
+                                studentsData.push(newStudent);
+                                importedCount++;
+                            } else {
+                                errorCount++;
+                            }
+                        } catch (error) {
+                            errorCount++;
+                        }
+                    });
+
+                    saveData();
+                    alert(`Import selesai!\n✅ ${importedCount} murid berjaya diimport\n❌ ${errorCount} baris gagal (data tidak lengkap)`);
+                    importGuide.classList.add('hidden');
+                } catch (error) {
+                    alert('Ralat membaca fail Excel. Sila pastikan format adalah betul.');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Event listeners for search
+        searchBtn.addEventListener('click', searchStudents);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchStudents();
+            }
+        });
+
+        document.getElementById('backToSearch').addEventListener('click', () => {
+            searchResults.classList.add('hidden');
+            searchSection.classList.remove('hidden');
+            searchInput.value = '';
+        });
+
+        document.getElementById('backToResults').addEventListener('click', () => {
+            studentDetails.classList.add('hidden');
+            searchResults.classList.remove('hidden');
+        });
+
+        document.getElementById('guardianInfoBtn').addEventListener('click', showGuardianDetails);
+
+        document.getElementById('backToStudent').addEventListener('click', () => {
+            guardianDetails.classList.add('hidden');
+            studentDetails.classList.remove('hidden');
+        });
+
+        // Admin event listeners
+        document.getElementById('addStudentBtn').addEventListener('click', showAddStudentForm);
+        document.getElementById('viewAllBtn').addEventListener('click', showAllStudents);
+        document.getElementById('exportBtn').addEventListener('click', exportData);
+        document.getElementById('importBtn').addEventListener('click', importExcel);
+        document.getElementById('downloadTemplateBtn').addEventListener('click', downloadTemplate);
+
+        document.getElementById('closeFormBtn').addEventListener('click', () => {
+            studentForm.classList.add('hidden');
+        });
+
+        document.getElementById('closeListBtn').addEventListener('click', () => {
+            studentListAdmin.classList.add('hidden');
+        });
+
+        document.getElementById('resetFormBtn').addEventListener('click', resetForm);
+
+        // Excel file input handler
+        excelFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleExcelFile(file);
+            }
+        });
+
+        // Form submission
+        addStudentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const newStudent = {
+                id: editingStudentId || Date.now(),
+                nama: document.getElementById('studentName').value,
+                kelas: document.getElementById('studentClass').value,
+                nokp: document.getElementById('studentIC').value,
+                tarikhLahir: document.getElementById('studentDOB').value,
+                alamat: document.getElementById('studentAddress').value,
+                penjagaUtama: {
+                    nama: document.getElementById('guardian1Name').value,
+                    nokp: document.getElementById('guardian1IC').value,
+                    telefon: document.getElementById('guardian1Phone').value,
+                    hubungan: document.getElementById('guardian1Relation').value
+                },
+                penjagaKedua: {
+                    nama: document.getElementById('guardian2Name').value,
+                    nokp: document.getElementById('guardian2IC').value,
+                    telefon: document.getElementById('guardian2Phone').value,
+                    hubungan: document.getElementById('guardian2Relation').value
+                }
+            };
+
+            if (editingStudentId) {
+                // Update existing student
+                const index = studentsData.findIndex(s => s.id === editingStudentId);
+                studentsData[index] = newStudent;
+                alert('Maklumat murid telah dikemaskini!');
+            } else {
+                // Add new student
+                studentsData.push(newStudent);
+                alert('Murid baru telah ditambah!');
+            }
+
+            saveData();
+            studentForm.classList.add('hidden');
+            resetForm();
+        });
+
+        // Initialize
+        updateStats();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984ed29e54e58e0c',t:'MTc1ODg0ODQwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
