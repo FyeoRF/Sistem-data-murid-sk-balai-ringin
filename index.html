@@ -292,6 +292,7 @@
                                 <th class="p-1 border">Kelas</th>
                                 <th class="p-1 border">NoKP</th>
                                 <th class="p-1 border">TarikhLahir</th>
+                                <th class="p-1 border">Bangsa</th>
                                 <th class="p-1 border">Alamat</th>
                                 <th class="p-1 border">Penjaga1Nama</th>
                                 <th class="p-1 border">Penjaga1KP</th>
@@ -370,6 +371,23 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Tarikh Lahir *</label>
                             <input type="text" id="studentDOB" required class="form-input w-full" placeholder="cth: 15 Mac 2012">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Bangsa *</label>
+                            <select id="studentRace" required class="form-input w-full">
+                                <option value="">Pilih bangsa</option>
+                                <option value="Melayu">Melayu</option>
+                                <option value="Cina">Cina</option>
+                                <option value="India">India</option>
+                                <option value="Iban">Iban</option>
+                                <option value="Bidayuh">Bidayuh</option>
+                                <option value="Melanau">Melanau</option>
+                                <option value="Orang Ulu">Orang Ulu</option>
+                                <option value="Kadazan">Kadazan</option>
+                                <option value="Dusun">Dusun</option>
+                                <option value="Bajau">Bajau</option>
+                                <option value="Lain-lain">Lain-lain</option>
+                            </select>
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Alamat *</label>
@@ -462,6 +480,7 @@
                 kelas: "6 Bestari",
                 nokp: "120345-06-1234",
                 tarikhLahir: "15 Mac 2012",
+                bangsa: "Melayu",
                 alamat: "No. 123, Jalan Merdeka, Taman Sejahtera, 94300 Kota Samarahan, Sarawak",
                 penjagaUtama: {
                     nama: "Abdullah bin Hassan",
@@ -482,6 +501,7 @@
                 kelas: "5 Cemerlang",
                 nokp: "130456-06-7890",
                 tarikhLahir: "22 Julai 2013",
+                bangsa: "Melayu",
                 alamat: "No. 456, Lorong Damai, Kampung Bahagia, 94300 Kota Samarahan, Sarawak",
                 penjagaUtama: {
                     nama: "Rahman bin Ali",
@@ -502,6 +522,7 @@
                 kelas: "6 Bestari",
                 nokp: "120567-06-2345",
                 tarikhLahir: "8 April 2012",
+                bangsa: "Melayu",
                 alamat: "No. 789, Jalan Harmoni, Taman Indah, 94300 Kota Samarahan, Sarawak",
                 penjagaUtama: {
                     nama: "Ismail bin Ahmad",
@@ -522,6 +543,7 @@
                 kelas: "6 Bestari",
                 nokp: "120890-06-3456",
                 tarikhLahir: "12 Jun 2012",
+                bangsa: "Melayu",
                 alamat: "No. 321, Jalan Ceria, Kampung Sejahtera, 94300 Kota Samarahan, Sarawak",
                 penjagaUtama: {
                     nama: "Azman bin Sulaiman",
@@ -542,6 +564,7 @@
                 kelas: "5 Cemerlang",
                 nokp: "130234-06-4567",
                 tarikhLahir: "3 September 2013",
+                bangsa: "Iban",
                 alamat: "No. 654, Lorong Bahagia, Taman Mesra, 94300 Kota Samarahan, Sarawak",
                 penjagaUtama: {
                     nama: "Rosli bin Mahmud",
@@ -845,6 +868,10 @@
                         <p class="info-value">${student.tarikhLahir}</p>
                     </div>
                     <div>
+                        <p class="info-label">Bangsa</p>
+                        <p class="info-value">${student.bangsa}</p>
+                    </div>
+                    <div>
                         <p class="info-label">Alamat</p>
                         <p class="info-value">${student.alamat}</p>
                     </div>
@@ -920,6 +947,7 @@
             document.getElementById('studentClass').value = student.kelas;
             document.getElementById('studentIC').value = student.nokp;
             document.getElementById('studentDOB').value = student.tarikhLahir;
+            document.getElementById('studentRace').value = student.bangsa;
             document.getElementById('studentAddress').value = student.alamat;
             
             document.getElementById('guardian1Name').value = student.penjagaUtama.nama;
@@ -993,6 +1021,7 @@
                     'Kelas': '6 Bestari',
                     'NoKP': '120345-06-1234',
                     'TarikhLahir': '15 Mac 2012',
+                    'Bangsa': 'Melayu',
                     'Alamat': 'No. 123, Jalan Merdeka, Taman Sejahtera, 94300 Kota Samarahan, Sarawak',
                     'Penjaga1Nama': 'Abdullah bin Hassan',
                     'Penjaga1KP': '801234-13-5678',
@@ -1038,6 +1067,7 @@
                                     kelas: row.Kelas || '',
                                     nokp: row.NoKP || '',
                                     tarikhLahir: row.TarikhLahir || '',
+                                    bangsa: row.Bangsa || '',
                                     alamat: row.Alamat || '',
                                     penjagaUtama: {
                                         nama: row.Penjaga1Nama || '',
@@ -1133,6 +1163,7 @@
                 kelas: document.getElementById('studentClass').value,
                 nokp: document.getElementById('studentIC').value,
                 tarikhLahir: document.getElementById('studentDOB').value,
+                bangsa: document.getElementById('studentRace').value,
                 alamat: document.getElementById('studentAddress').value,
                 penjagaUtama: {
                     nama: document.getElementById('guardian1Name').value,
@@ -1190,5 +1221,178 @@
         // Initialize
         updateStats();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984f635402352203',t:'MTc1ODg1NDMzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+    <!-- GitHub Integration Guide -->
+    <div id="githubGuide" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-4xl w-full mx-4 card-shadow max-h-[90vh] overflow-y-auto">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">Panduan GitHub - Tambah Ciri "Bangsa"</h3>
+                <p class="text-gray-600 mt-2">Ikuti langkah mudah ini untuk kemaskini website anda</p>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- Step 1 -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl">
+                    <h4 class="text-lg font-bold text-blue-800 mb-3">📁 Langkah 1: Buka Repository GitHub</h4>
+                    <ol class="list-decimal list-inside space-y-2 text-blue-700">
+                        <li>Pergi ke <strong>github.com</strong> dan login</li>
+                        <li>Buka repository website anda</li>
+                        <li>Cari fail <code class="bg-blue-200 px-2 py-1 rounded">index.html</code> atau fail HTML utama</li>
+                    </ol>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-r-xl">
+                    <h4 class="text-lg font-bold text-green-800 mb-3">✏️ Langkah 2: Edit Fail HTML</h4>
+                    <ol class="list-decimal list-inside space-y-2 text-green-700">
+                        <li>Klik butang <strong>✏️ Edit</strong> (pensil) pada fail HTML</li>
+                        <li>Cari bahagian form "Tambah Murid" (sekitar baris 800-900)</li>
+                        <li>Tambah kod berikut <strong>SELEPAS</strong> bahagian "Tarikh Lahir":</li>
+                    </ol>
+                    <div class="mt-3 bg-white p-4 rounded border text-sm overflow-x-auto">
+                        <pre><code>&lt;div&gt;
+    &lt;label class="block text-sm font-semibold text-gray-700 mb-2"&gt;Bangsa *&lt;/label&gt;
+    &lt;select id="studentRace" required class="form-input w-full"&gt;
+        &lt;option value=""&gt;Pilih bangsa&lt;/option&gt;
+        &lt;option value="Melayu"&gt;Melayu&lt;/option&gt;
+        &lt;option value="Cina"&gt;Cina&lt;/option&gt;
+        &lt;option value="India"&gt;India&lt;/option&gt;
+        &lt;option value="Iban"&gt;Iban&lt;/option&gt;
+        &lt;option value="Bidayuh"&gt;Bidayuh&lt;/option&gt;
+        &lt;option value="Melanau"&gt;Melanau&lt;/option&gt;
+        &lt;option value="Orang Ulu"&gt;Orang Ulu&lt;/option&gt;
+        &lt;option value="Kadazan"&gt;Kadazan&lt;/option&gt;
+        &lt;option value="Dusun"&gt;Dusun&lt;/option&gt;
+        &lt;option value="Bajau"&gt;Bajau&lt;/option&gt;
+        &lt;option value="Lain-lain"&gt;Lain-lain&lt;/option&gt;
+    &lt;/select&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-r-xl">
+                    <h4 class="text-lg font-bold text-purple-800 mb-3">📊 Langkah 3: Kemaskini Paparan Data</h4>
+                    <p class="text-purple-700 mb-3">Cari fungsi <code class="bg-purple-200 px-2 py-1 rounded">showStudentDetails</code> dan tambah baris ini:</p>
+                    <div class="bg-white p-4 rounded border text-sm overflow-x-auto">
+                        <pre><code>// Tambah selepas "Tarikh Lahir"
+&lt;div&gt;
+    &lt;p class="info-label"&gt;Bangsa&lt;/p&gt;
+    &lt;p class="info-value"&gt;${student.bangsa}&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-xl">
+                    <h4 class="text-lg font-bold text-orange-800 mb-3">💾 Langkah 4: Kemaskini Data Murid</h4>
+                    <p class="text-orange-700 mb-3">Dalam fungsi form submission, tambah baris ini:</p>
+                    <div class="bg-white p-4 rounded border text-sm overflow-x-auto">
+                        <pre><code>// Dalam bahagian newStudent object
+bangsa: document.getElementById('studentRace').value,</code></pre>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-xl">
+                    <h4 class="text-lg font-bold text-red-800 mb-3">🚀 Langkah 5: Simpan & Publish</h4>
+                    <ol class="list-decimal list-inside space-y-2 text-red-700">
+                        <li>Scroll ke bawah dan tulis commit message: <code class="bg-red-200 px-2 py-1 rounded">"Tambah maklumat bangsa"</code></li>
+                        <li>Klik <strong>"Commit changes"</strong></li>
+                        <li>Pergi ke <strong>Settings</strong> → <strong>Pages</strong></li>
+                        <li>Pastikan GitHub Pages aktif</li>
+                        <li>Website akan kemaskini dalam 2-5 minit</li>
+                    </ol>
+                </div>
+
+                <!-- Alternative Method -->
+                <div class="bg-gray-50 border-l-4 border-gray-500 p-6 rounded-r-xl">
+                    <h4 class="text-lg font-bold text-gray-800 mb-3">🔄 Cara Alternatif: Ganti Keseluruhan</h4>
+                    <p class="text-gray-700 mb-3">Jika susah nak edit, boleh ganti keseluruhan fail:</p>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Copy semua kod dari Canva Code ini</li>
+                        <li>Dalam GitHub, klik <strong>✏️ Edit</strong> pada index.html</li>
+                        <li>Select All (Ctrl+A) dan delete semua</li>
+                        <li>Paste kod baru</li>
+                        <li>Commit changes</li>
+                    </ol>
+                </div>
+
+                <!-- Tips -->
+                <div class="bg-yellow-50 border border-yellow-300 p-6 rounded-xl">
+                    <h4 class="text-lg font-bold text-yellow-800 mb-3">💡 Tips Berguna</h4>
+                    <ul class="list-disc list-inside space-y-2 text-yellow-700">
+                        <li><strong>Backup:</strong> Download fail lama sebelum edit</li>
+                        <li><strong>Test:</strong> Cuba website selepas kemaskini</li>
+                        <li><strong>Data:</strong> Data lama akan kekal, cuma form baru ada pilihan bangsa</li>
+                        <li><strong>Mobile:</strong> Website akan responsive di telefon</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex gap-4 mt-8 pt-6 border-t">
+                <button onclick="copyFullCode()" class="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all font-semibold">
+                    📋 Copy Kod Penuh
+                </button>
+                <button onclick="closeGithubGuide()" class="flex-1 bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600 transition-colors font-semibold">
+                    ✕ Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GitHub Guide Button -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button onclick="showGithubGuide()" class="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group">
+            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        function showGithubGuide() {
+            document.getElementById('githubGuide').classList.remove('hidden');
+        }
+        
+        function closeGithubGuide() {
+            document.getElementById('githubGuide').classList.add('hidden');
+        }
+        
+        function copyFullCode() {
+            const htmlContent = document.documentElement.outerHTML;
+            navigator.clipboard.writeText(htmlContent).then(() => {
+                alert('✅ Kod penuh telah disalin! Paste dalam GitHub editor anda.');
+            }).catch(() => {
+                // Fallback method
+                const textArea = document.createElement('textarea');
+                textArea.value = htmlContent;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('✅ Kod penuh telah disalin! Paste dalam GitHub editor anda.');
+            });
+        }
+        
+        // Close guide with ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !document.getElementById('githubGuide').classList.contains('hidden')) {
+                closeGithubGuide();
+            }
+        });
+        
+        // Close guide when clicking outside
+        document.getElementById('githubGuide').addEventListener('click', (e) => {
+            if (e.target.id === 'githubGuide') {
+                closeGithubGuide();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98dbaec3f0190a32',t:'MTc2MDMyNTQzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
