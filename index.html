@@ -466,6 +466,9 @@
                     <button type="button" id="resetFormBtn" class="bg-gray-500 text-white px-8 py-3 rounded-lg hover:bg-gray-600 transition-colors font-semibold">
                         🔄 Reset Form
                     </button>
+                    <button type="button" id="backToListBtn" class="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors font-semibold">
+                        📋 Kembali ke Senarai
+                    </button>
                 </div>
             </form>
         </div>
@@ -623,7 +626,7 @@
         let isAdminLoggedIn = false;
         
         // Admin security settings
-        const ADMIN_PASSWORD = "icareskbr2025"; // Tukar kata laluan ini untuk keselamatan
+        const ADMIN_PASSWORD = "admin123"; // Tukar kata laluan ini untuk keselamatan
         const LOGIN_ATTEMPTS_KEY = 'adminLoginAttempts';
         const LAST_ATTEMPT_KEY = 'lastLoginAttempt';
         const MAX_ATTEMPTS = 5;
@@ -979,15 +982,34 @@
                     <td class="border border-gray-200 px-4 py-3">${student.kelas}</td>
                     <td class="border border-gray-200 px-4 py-3">${student.nokp}</td>
                     <td class="border border-gray-200 px-4 py-3 text-center">
-                        <button onclick="showEditStudentForm(studentsData.find(s => s.id === ${student.id}))" class="bg-blue-500 text-white px-3 py-1 rounded mr-2 hover:bg-blue-600 text-sm">
+                        <button class="edit-btn bg-blue-500 text-white px-3 py-1 rounded mr-2 hover:bg-blue-600 text-sm" data-student-id="${student.id}">
                             ✏️ Edit
                         </button>
-                        <button onclick="deleteStudent(${student.id})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm">
+                        <button class="delete-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm" data-student-id="${student.id}">
                             🗑️ Padam
                         </button>
                     </td>
                 `;
                 tbody.appendChild(row);
+            });
+            
+            // Add event listeners for edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const studentId = parseInt(e.target.getAttribute('data-student-id'));
+                    const student = studentsData.find(s => s.id === studentId);
+                    if (student) {
+                        studentListAdmin.classList.add('hidden');
+                        showEditStudentForm(student);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const studentId = parseInt(e.target.getAttribute('data-student-id'));
+                    deleteStudent(studentId);
+                });
             });
             
             studentListAdmin.classList.remove('hidden');
@@ -1144,6 +1166,11 @@
         });
 
         document.getElementById('resetFormBtn').addEventListener('click', resetForm);
+        
+        document.getElementById('backToListBtn').addEventListener('click', () => {
+            studentForm.classList.add('hidden');
+            showAllStudents();
+        });
 
         // Excel file input handler
         excelFileInput.addEventListener('change', (e) => {
@@ -1183,16 +1210,19 @@
                 // Update existing student
                 const index = studentsData.findIndex(s => s.id === editingStudentId);
                 studentsData[index] = newStudent;
-                alert('Maklumat murid telah dikemaskini!');
+                alert('✅ Maklumat murid telah dikemaskini!');
+                saveData();
+                studentForm.classList.add('hidden');
+                resetForm();
+                showAllStudents(); // Kembali ke senarai dengan data terkini
             } else {
                 // Add new student
                 studentsData.push(newStudent);
-                alert('Murid baru telah ditambah!');
+                alert('✅ Murid baru telah ditambah!');
+                saveData();
+                studentForm.classList.add('hidden');
+                resetForm();
             }
-
-            saveData();
-            studentForm.classList.add('hidden');
-            resetForm();
         });
 
         // Login form event listeners
@@ -1394,5 +1424,5 @@ bangsa: document.getElementById('studentRace').value,</code></pre>
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98dbaec3f0190a32',t:'MTc2MDMyNTQzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e34fad87b064ad',t:'MTc2MDQwNTQyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
