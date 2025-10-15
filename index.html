@@ -236,7 +236,7 @@
         </div>
     </div>
 
-    <!-- Share Data Modal -->
+    <!-- Share Website Modal -->
     <div id="shareModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 card-shadow">
             <div class="text-center mb-6">
@@ -245,34 +245,24 @@
                         <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
                     </svg>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800">Kongsi Data Murid</h3>
-                <p class="text-gray-600 mt-2">Jana pautan untuk dikongsi dengan orang lain</p>
+                <h3 class="text-2xl font-bold text-gray-800">Kongsi Website</h3>
+                <p class="text-gray-600 mt-2">Kongsi link website untuk akses data murid</p>
             </div>
             
             <div class="space-y-6">
-                <!-- QR Code Area -->
-                <div class="bg-gray-50 p-6 rounded-xl text-center">
-                    <div id="qrCodeArea" class="mb-4">
-                        <div class="w-48 h-48 bg-white border-2 border-dashed border-gray-300 rounded-lg mx-auto flex items-center justify-center">
-                            <p class="text-gray-500">QR Code akan muncul di sini</p>
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-600">Scan QR code untuk akses pantas</p>
-                </div>
-
-                <!-- Shareable Link -->
+                <!-- Website Link -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pautan Kongsi Data</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Link Website</label>
                     <div class="flex gap-2">
                         <input 
                             type="text" 
-                            id="shareableLink" 
+                            id="websiteLink" 
                             readonly 
                             class="flex-1 form-input bg-gray-50"
-                            placeholder="Pautan akan dijana di sini..."
+                            value=""
                         >
                         <button 
-                            id="copyLinkBtn" 
+                            id="copyWebsiteLinkBtn" 
                             class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
                         >
                             📋 Copy
@@ -280,37 +270,52 @@
                     </div>
                 </div>
 
+                <!-- QR Code Area -->
+                <div class="bg-gray-50 p-6 rounded-xl text-center">
+                    <div id="qrCodeArea" class="mb-4">
+                        <div class="w-48 h-48 bg-white border-2 border-dashed border-gray-300 rounded-lg mx-auto flex items-center justify-center">
+                            <p class="text-gray-500">QR Code website</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">Scan QR code untuk buka website</p>
+                </div>
+
                 <!-- Instructions -->
                 <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                    <h4 class="font-bold text-blue-800 mb-2">📱 Cara Guna:</h4>
+                    <h4 class="font-bold text-blue-800 mb-2">📱 Cara Kongsi:</h4>
                     <ol class="list-decimal list-inside text-sm text-blue-700 space-y-1">
-                        <li>Klik "Jana Pautan" untuk cipta pautan kongsi</li>
-                        <li>Copy pautan atau scan QR code</li>
-                        <li>Hantar pautan kepada orang yang ingin lihat data</li>
-                        <li>Mereka boleh buka pautan untuk lihat semua data murid</li>
-                        <li>Pautan boleh dibuka di mana-mana peranti</li>
+                        <li>Copy link website di atas</li>
+                        <li>Hantar link kepada sesiapa yang perlu akses</li>
+                        <li>Mereka buka link = boleh cari dan lihat data murid</li>
+                        <li>Atau scan QR code untuk akses pantas</li>
+                        <li>Website boleh dibuka di mana-mana peranti</li>
                     </ol>
                 </div>
 
-                <!-- Warning -->
+                <!-- Features -->
+                <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
+                    <h4 class="font-bold text-green-800 mb-2">✨ Apa Yang Boleh Mereka Buat:</h4>
+                    <ul class="list-disc list-inside text-sm text-green-700 space-y-1">
+                        <li><strong>Cari Murid:</strong> Masukkan nama atau kelas untuk cari</li>
+                        <li><strong>Lihat Maklumat:</strong> Data lengkap murid dan penjaga</li>
+                        <li><strong>Akses Mudah:</strong> Guna di telefon, tablet, atau komputer</li>
+                        <li><strong>Tiada Login:</strong> Terus boleh guna untuk carian</li>
+                    </ul>
+                </div>
+
+                <!-- Security Note -->
                 <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                    <h4 class="font-bold text-yellow-800 mb-2">⚠️ Penting:</h4>
+                    <h4 class="font-bold text-yellow-800 mb-2">🔒 Keselamatan:</h4>
                     <ul class="list-disc list-inside text-sm text-yellow-700 space-y-1">
-                        <li>Pautan mengandungi data murid - jaga keselamatan</li>
-                        <li>Hanya kongsi dengan orang yang dipercayai</li>
-                        <li>Sesiapa yang ada pautan boleh lihat semua data</li>
-                        <li>Pautan akan kekal aktif selagi tidak ditukar</li>
+                        <li>Orang awam hanya boleh <strong>cari dan lihat</strong> data</li>
+                        <li>Mereka <strong>tidak boleh edit, tambah atau padam</strong> data</li>
+                        <li>Panel admin dilindungi dengan kata laluan</li>
+                        <li>Selamat untuk dikongsi dengan ibu bapa dan guru</li>
                     </ul>
                 </div>
             </div>
 
             <div class="flex gap-4 mt-8">
-                <button 
-                    id="generateLinkBtn" 
-                    class="flex-1 bg-gradient-to-r from-pink-500 to-rose-600 text-white py-3 rounded-lg hover:from-pink-600 hover:to-rose-700 transition-all font-semibold"
-                >
-                    🔗 Jana Pautan
-                </button>
                 <button 
                     id="closeShareModal" 
                     class="flex-1 bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600 transition-colors font-semibold"
@@ -364,7 +369,7 @@
                 </button>
 
                 <button id="shareDataBtn" class="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-6 py-3 rounded-lg hover:from-pink-600 hover:to-rose-700 transition-all font-semibold">
-                    🔗 Kongsi Data
+                    🔗 Kongsi Website
                 </button>
                 <input type="file" id="excelFileInput" accept=".xlsx,.xls" class="hidden">
             </div>
@@ -701,45 +706,9 @@
             updateStats();
         }
 
-        // Generate shareable link
-        function generateShareableLink() {
-            const dataToShare = {
-                timestamp: Date.now(),
-                school: 'SK Balai Ringin',
-                data: studentsData,
-                version: '2.0'
-            };
-            
-            const encodedData = btoa(JSON.stringify(dataToShare));
-            const currentUrl = window.location.href.split('?')[0];
-            const shareableUrl = `${currentUrl}?data=${encodedData}`;
-            
-            return shareableUrl;
-        }
-
-        // Load data from URL parameter
-        function loadFromUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const encodedData = urlParams.get('data');
-            
-            if (encodedData) {
-                try {
-                    const decodedData = JSON.parse(atob(encodedData));
-                    if (decodedData.data && Array.isArray(decodedData.data)) {
-                        // Ask user if they want to load this data
-                        if (confirm(`Ditemui data dari ${decodedData.school || 'sekolah lain'}\nTarikh: ${new Date(decodedData.timestamp).toLocaleString('ms-MY')}\nJumlah murid: ${decodedData.data.length}\n\nMuat data ini?`)) {
-                            studentsData = decodedData.data;
-                            saveData();
-                            showNotification('✅ Data telah dimuat dari pautan!', 'success');
-                            
-                            // Clean URL
-                            window.history.replaceState({}, document.title, window.location.pathname);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Failed to load data from URL:', error);
-                }
-            }
+        // Get current website URL
+        function getCurrentWebsiteUrl() {
+            return window.location.href.split('?')[0];
         }
 
         // Show notification
@@ -1354,27 +1323,17 @@
 
 
         function showShareModal() {
+            const websiteUrl = getCurrentWebsiteUrl();
+            document.getElementById('websiteLink').value = websiteUrl;
+            
+            // Generate QR Code for website
+            generateQRCode(websiteUrl);
+            
             document.getElementById('shareModal').classList.remove('hidden');
         }
 
         function hideShareModal() {
             document.getElementById('shareModal').classList.add('hidden');
-            document.getElementById('shareableLink').value = '';
-            document.getElementById('qrCodeArea').innerHTML = `
-                <div class="w-48 h-48 bg-white border-2 border-dashed border-gray-300 rounded-lg mx-auto flex items-center justify-center">
-                    <p class="text-gray-500">QR Code akan muncul di sini</p>
-                </div>
-            `;
-        }
-
-        function generateAndShowLink() {
-            const shareableUrl = generateShareableLink();
-            document.getElementById('shareableLink').value = shareableUrl;
-            
-            // Generate QR Code using a simple QR code generator
-            generateQRCode(shareableUrl);
-            
-            showNotification('🔗 Pautan kongsi telah dijana!', 'success');
         }
 
         function generateQRCode(text) {
@@ -1383,32 +1342,26 @@
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(text)}`;
             
             document.getElementById('qrCodeArea').innerHTML = `
-                <img src="${qrUrl}" alt="QR Code" class="w-48 h-48 mx-auto border rounded-lg" 
+                <img src="${qrUrl}" alt="QR Code Website" class="w-48 h-48 mx-auto border rounded-lg" 
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <div class="w-48 h-48 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg mx-auto items-center justify-center text-center p-4" style="display:none;">
-                    <p class="text-gray-500 text-sm">QR Code tidak dapat dimuat.<br>Gunakan pautan di bawah.</p>
+                    <p class="text-gray-500 text-sm">QR Code tidak dapat dimuat.<br>Gunakan link di atas.</p>
                 </div>
             `;
         }
 
-        function copyShareableLink() {
-            const linkInput = document.getElementById('shareableLink');
+        function copyWebsiteLink() {
+            const linkInput = document.getElementById('websiteLink');
             linkInput.select();
             linkInput.setSelectionRange(0, 99999); // For mobile devices
             
             navigator.clipboard.writeText(linkInput.value).then(() => {
-                showNotification('📋 Pautan telah disalin!', 'success');
+                showNotification('📋 Link website telah disalin!', 'success');
             }).catch(() => {
                 // Fallback for older browsers
                 document.execCommand('copy');
-                showNotification('📋 Pautan telah disalin!', 'success');
+                showNotification('📋 Link website telah disalin!', 'success');
             });
-        }
-
-        // Load data from URL on startup
-        function initializeData() {
-            // Check for URL data first
-            loadFromUrl();
         }
 
         // Admin event listeners
@@ -1514,8 +1467,7 @@
         });
 
         // Share modal event listeners
-        document.getElementById('generateLinkBtn').addEventListener('click', generateAndShowLink);
-        document.getElementById('copyLinkBtn').addEventListener('click', copyShareableLink);
+        document.getElementById('copyWebsiteLinkBtn').addEventListener('click', copyWebsiteLink);
         document.getElementById('closeShareModal').addEventListener('click', hideShareModal);
 
         // Close share modal when clicking outside
@@ -1527,7 +1479,6 @@
 
         // Initialize
         updateStats();
-        initializeData();
     </script>
 
     <!-- GitHub Integration Guide -->
@@ -1702,5 +1653,5 @@ bangsa: document.getElementById('studentRace').value,</code></pre>
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98edafb71339a319',t:'MTc2MDUxNDIxNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98edbcb573c6a319',t:'MTc2MDUxNDc0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
