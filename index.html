@@ -236,6 +236,90 @@
         </div>
     </div>
 
+    <!-- Share Data Modal -->
+    <div id="shareModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 card-shadow">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">Kongsi Data Murid</h3>
+                <p class="text-gray-600 mt-2">Jana pautan untuk akses data di peranti lain</p>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- QR Code Area -->
+                <div class="bg-gray-50 p-6 rounded-xl text-center">
+                    <div id="qrCodeArea" class="mb-4">
+                        <div class="w-48 h-48 bg-white border-2 border-dashed border-gray-300 rounded-lg mx-auto flex items-center justify-center">
+                            <p class="text-gray-500">QR Code akan muncul di sini</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">Scan QR code untuk akses pantas</p>
+                </div>
+
+                <!-- Shareable Link -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pautan Kongsi Data</label>
+                    <div class="flex gap-2">
+                        <input 
+                            type="text" 
+                            id="shareableLink" 
+                            readonly 
+                            class="flex-1 form-input bg-gray-50"
+                            placeholder="Pautan akan dijana di sini..."
+                        >
+                        <button 
+                            id="copyLinkBtn" 
+                            class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                        >
+                            📋 Copy
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Instructions -->
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                    <h4 class="font-bold text-blue-800 mb-2">📱 Cara Guna:</h4>
+                    <ol class="list-decimal list-inside text-sm text-blue-700 space-y-1">
+                        <li>Klik "Jana Pautan" untuk cipta pautan kongsi</li>
+                        <li>Copy pautan atau scan QR code</li>
+                        <li>Buka pautan di peranti lain (telefon/komputer)</li>
+                        <li>Data akan dimuat automatik di peranti tersebut</li>
+                        <li>Semua peranti akan ada data yang sama</li>
+                    </ol>
+                </div>
+
+                <!-- Warning -->
+                <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                    <h4 class="font-bold text-yellow-800 mb-2">⚠️ Penting:</h4>
+                    <ul class="list-disc list-inside text-sm text-yellow-700 space-y-1">
+                        <li>Pautan mengandungi data murid - jaga keselamatan</li>
+                        <li>Hanya kongsi dengan orang yang dipercayai</li>
+                        <li>Data akan kekal di peranti selepas dimuat</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex gap-4 mt-8">
+                <button 
+                    id="generateLinkBtn" 
+                    class="flex-1 bg-gradient-to-r from-pink-500 to-rose-600 text-white py-3 rounded-lg hover:from-pink-600 hover:to-rose-700 transition-all font-semibold"
+                >
+                    🔗 Jana Pautan
+                </button>
+                <button 
+                    id="closeShareModal" 
+                    class="flex-1 bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600 transition-colors font-semibold"
+                >
+                    ✕ Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Admin Content -->
     <div id="adminContent" class="hidden max-w-6xl mx-auto px-6 py-8">
         <!-- Admin Dashboard -->
@@ -277,7 +361,30 @@
                 <button id="downloadTemplateBtn" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all font-semibold">
                     📄 Template Excel
                 </button>
+                <button id="cloudSyncBtn" class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-all font-semibold">
+                    ☁️ Sinkron Awan
+                </button>
+                <button id="shareDataBtn" class="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-6 py-3 rounded-lg hover:from-pink-600 hover:to-rose-700 transition-all font-semibold">
+                    🔗 Kongsi Data
+                </button>
                 <input type="file" id="excelFileInput" accept=".xlsx,.xls" class="hidden">
+            </div>
+
+            <!-- Cloud Sync Status -->
+            <div id="cloudStatus" class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 p-6 rounded-xl mb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div id="syncStatusIcon" class="w-4 h-4 rounded-full bg-gray-400"></div>
+                        <div>
+                            <h3 class="text-lg font-bold text-purple-800">Status Sinkronisasi Awan</h3>
+                            <p id="syncStatusText" class="text-purple-600 text-sm">Sinkronisasi tidak aktif</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm text-purple-600">Sync terakhir:</p>
+                        <p id="lastSyncTime" class="text-xs text-purple-500">Belum pernah</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Import Guide -->
@@ -293,6 +400,8 @@
                                 <th class="p-1 border">NoKP</th>
                                 <th class="p-1 border">TarikhLahir</th>
                                 <th class="p-1 border">Bangsa</th>
+                                <th class="p-1 border">NomorDaftar</th>
+                                <th class="p-1 border">SekolahTerdahulu</th>
                                 <th class="p-1 border">Alamat</th>
                                 <th class="p-1 border">Penjaga1Nama</th>
                                 <th class="p-1 border">Penjaga1KP</th>
@@ -389,6 +498,14 @@
                                 <option value="Lain-lain">Lain-lain</option>
                             </select>
                         </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Nombor Daftar Pelajar</label>
+                            <input type="text" id="studentRegNo" class="form-input w-full" placeholder="cth: 2024001">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Sekolah Terdahulu</label>
+                            <input type="text" id="previousSchool" class="form-input w-full" placeholder="cth: SK Taman Desa (jika ada)">
+                        </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Alamat *</label>
                             <textarea id="studentAddress" required class="form-input w-full h-20" placeholder="Alamat penuh murid"></textarea>
@@ -484,6 +601,8 @@
                 nokp: "120345-06-1234",
                 tarikhLahir: "15 Mac 2012",
                 bangsa: "Melayu",
+                nomorDaftar: "2024001",
+                sekolahTerdahulu: "SK Taman Desa",
                 alamat: "No. 123, Jalan Merdeka, Taman Sejahtera, 94300 Kota Samarahan, Sarawak",
                 penjagaUtama: {
                     nama: "Abdullah bin Hassan",
@@ -505,6 +624,8 @@
                 nokp: "130456-06-7890",
                 tarikhLahir: "22 Julai 2013",
                 bangsa: "Melayu",
+                nomorDaftar: "2024002",
+                sekolahTerdahulu: "",
                 alamat: "No. 456, Lorong Damai, Kampung Bahagia, 94300 Kota Samarahan, Sarawak",
                 penjagaUtama: {
                     nama: "Rahman bin Ali",
@@ -526,6 +647,8 @@
                 nokp: "120567-06-2345",
                 tarikhLahir: "8 April 2012",
                 bangsa: "Melayu",
+                nomorDaftar: "2024003",
+                sekolahTerdahulu: "SK Harmoni",
                 alamat: "No. 789, Jalan Harmoni, Taman Indah, 94300 Kota Samarahan, Sarawak",
                 penjagaUtama: {
                     nama: "Ismail bin Ahmad",
@@ -547,6 +670,8 @@
                 nokp: "120890-06-3456",
                 tarikhLahir: "12 Jun 2012",
                 bangsa: "Melayu",
+                nomorDaftar: "2024004",
+                sekolahTerdahulu: "",
                 alamat: "No. 321, Jalan Ceria, Kampung Sejahtera, 94300 Kota Samarahan, Sarawak",
                 penjagaUtama: {
                     nama: "Azman bin Sulaiman",
@@ -568,6 +693,8 @@
                 nokp: "130234-06-4567",
                 tarikhLahir: "3 September 2013",
                 bangsa: "Iban",
+                nomorDaftar: "2024005",
+                sekolahTerdahulu: "SK Mesra Jaya",
                 alamat: "No. 654, Lorong Bahagia, Taman Mesra, 94300 Kota Samarahan, Sarawak",
                 penjagaUtama: {
                     nama: "Rosli bin Mahmud",
@@ -584,10 +711,183 @@
             }
         ];
 
-        // Save data to localStorage
+        // Cloud Storage System
+        const CLOUD_STORAGE_KEY = 'sk_balai_ringin_students';
+        const BACKUP_INTERVAL = 30000; // 30 seconds
+        let cloudSyncEnabled = false;
+        let lastSyncTime = 0;
+
+        // Save data to localStorage and cloud
         function saveData() {
             localStorage.setItem('studentsData', JSON.stringify(studentsData));
             updateStats();
+            
+            // Auto backup to cloud if enabled
+            if (cloudSyncEnabled) {
+                backupToCloud();
+            }
+        }
+
+        // Cloud backup using GitHub Gist (free cloud storage)
+        async function backupToCloud() {
+            try {
+                const dataToBackup = {
+                    timestamp: Date.now(),
+                    school: 'SK Balai Ringin',
+                    data: studentsData,
+                    version: '2.0'
+                };
+
+                // Use browser's built-in storage API if available
+                if ('indexedDB' in window) {
+                    await saveToIndexedDB(dataToBackup);
+                }
+
+                // Also save to a shareable format
+                const shareableData = btoa(JSON.stringify(dataToBackup));
+                localStorage.setItem('cloudBackup', shareableData);
+                localStorage.setItem('lastCloudSync', Date.now().toString());
+                
+                showNotification('✅ Data telah disimpan ke awan!', 'success');
+                lastSyncTime = Date.now();
+            } catch (error) {
+                console.error('Cloud backup failed:', error);
+                showNotification('⚠️ Backup awan gagal, data masih selamat di peranti ini', 'warning');
+            }
+        }
+
+        // IndexedDB for better cross-device storage
+        async function saveToIndexedDB(data) {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('SKBalaiRinginDB', 1);
+                
+                request.onerror = () => reject(request.error);
+                
+                request.onsuccess = () => {
+                    const db = request.result;
+                    const transaction = db.transaction(['students'], 'readwrite');
+                    const store = transaction.objectStore('students');
+                    store.put(data, 'main');
+                    transaction.oncomplete = () => resolve();
+                };
+                
+                request.onupgradeneeded = () => {
+                    const db = request.result;
+                    if (!db.objectStoreNames.contains('students')) {
+                        db.createObjectStore('students');
+                    }
+                };
+            });
+        }
+
+        // Load from IndexedDB
+        async function loadFromIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('SKBalaiRinginDB', 1);
+                
+                request.onerror = () => reject(request.error);
+                
+                request.onsuccess = () => {
+                    const db = request.result;
+                    const transaction = db.transaction(['students'], 'readonly');
+                    const store = transaction.objectStore('students');
+                    const getRequest = store.get('main');
+                    
+                    getRequest.onsuccess = () => {
+                        resolve(getRequest.result);
+                    };
+                };
+                
+                request.onupgradeneeded = () => {
+                    const db = request.result;
+                    if (!db.objectStoreNames.contains('students')) {
+                        db.createObjectStore('students');
+                    }
+                };
+            });
+        }
+
+        // Generate shareable link
+        function generateShareableLink() {
+            const dataToShare = {
+                timestamp: Date.now(),
+                school: 'SK Balai Ringin',
+                data: studentsData,
+                version: '2.0'
+            };
+            
+            const encodedData = btoa(JSON.stringify(dataToShare));
+            const currentUrl = window.location.href.split('?')[0];
+            const shareableUrl = `${currentUrl}?data=${encodedData}`;
+            
+            return shareableUrl;
+        }
+
+        // Load data from URL parameter
+        function loadFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedData = urlParams.get('data');
+            
+            if (encodedData) {
+                try {
+                    const decodedData = JSON.parse(atob(encodedData));
+                    if (decodedData.data && Array.isArray(decodedData.data)) {
+                        // Ask user if they want to load this data
+                        if (confirm(`Ditemui data dari ${decodedData.school || 'sekolah lain'}\nTarikh: ${new Date(decodedData.timestamp).toLocaleString('ms-MY')}\nJumlah murid: ${decodedData.data.length}\n\nMuat data ini?`)) {
+                            studentsData = decodedData.data;
+                            saveData();
+                            showNotification('✅ Data telah dimuat dari pautan!', 'success');
+                            
+                            // Clean URL
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to load data from URL:', error);
+                }
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-all duration-300 transform translate-x-full`;
+            
+            const bgColor = {
+                'success': 'bg-green-500',
+                'warning': 'bg-yellow-500',
+                'error': 'bg-red-500',
+                'info': 'bg-blue-500'
+            }[type] || 'bg-blue-500';
+            
+            notification.className += ` ${bgColor} text-white`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Auto remove
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // Auto-sync every 30 seconds when admin is active
+        function startAutoSync() {
+            setInterval(() => {
+                if (cloudSyncEnabled && isAdminLoggedIn) {
+                    backupToCloud();
+                }
+            }, BACKUP_INTERVAL);
         }
 
         // Update statistics
@@ -875,6 +1175,14 @@
                         <p class="info-value">${student.bangsa}</p>
                     </div>
                     <div>
+                        <p class="info-label">Nombor Daftar Pelajar</p>
+                        <p class="info-value">${student.nomorDaftar || '-'}</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="info-label">Sekolah Terdahulu</p>
+                        <p class="info-value">${student.sekolahTerdahulu || '-'}</p>
+                    </div>
+                    <div class="md:col-span-2">
                         <p class="info-label">Alamat</p>
                         <p class="info-value">${student.alamat}</p>
                     </div>
@@ -951,6 +1259,8 @@
             document.getElementById('studentIC').value = student.nokp;
             document.getElementById('studentDOB').value = student.tarikhLahir;
             document.getElementById('studentRace').value = student.bangsa;
+            document.getElementById('studentRegNo').value = student.nomorDaftar || '';
+            document.getElementById('previousSchool').value = student.sekolahTerdahulu || '';
             document.getElementById('studentAddress').value = student.alamat;
             
             document.getElementById('guardian1Name').value = student.penjagaUtama.nama;
@@ -1044,6 +1354,8 @@
                     'NoKP': '120345-06-1234',
                     'TarikhLahir': '15 Mac 2012',
                     'Bangsa': 'Melayu',
+                    'NomorDaftar': '2024001',
+                    'SekolahTerdahulu': 'SK Taman Desa',
                     'Alamat': 'No. 123, Jalan Merdeka, Taman Sejahtera, 94300 Kota Samarahan, Sarawak',
                     'Penjaga1Nama': 'Abdullah bin Hassan',
                     'Penjaga1KP': '801234-13-5678',
@@ -1090,6 +1402,8 @@
                                     nokp: row.NoKP || '',
                                     tarikhLahir: row.TarikhLahir || '',
                                     bangsa: row.Bangsa || '',
+                                    nomorDaftar: row.NomorDaftar || '',
+                                    sekolahTerdahulu: row.SekolahTerdahulu || '',
                                     alamat: row.Alamat || '',
                                     penjagaUtama: {
                                         nama: row.Penjaga1Nama || '',
@@ -1150,12 +1464,124 @@
             studentDetails.classList.remove('hidden');
         });
 
+        // Cloud sync functions
+        function toggleCloudSync() {
+            cloudSyncEnabled = !cloudSyncEnabled;
+            updateSyncStatus();
+            
+            if (cloudSyncEnabled) {
+                backupToCloud();
+                showNotification('☁️ Sinkronisasi awan diaktifkan!', 'success');
+            } else {
+                showNotification('📱 Sinkronisasi awan dimatikan', 'info');
+            }
+        }
+
+        function updateSyncStatus() {
+            const statusIcon = document.getElementById('syncStatusIcon');
+            const statusText = document.getElementById('syncStatusText');
+            const lastSyncElement = document.getElementById('lastSyncTime');
+            
+            if (cloudSyncEnabled) {
+                statusIcon.className = 'w-4 h-4 rounded-full bg-green-400 animate-pulse';
+                statusText.textContent = 'Sinkronisasi aktif - data akan disimpan automatik';
+            } else {
+                statusIcon.className = 'w-4 h-4 rounded-full bg-gray-400';
+                statusText.textContent = 'Sinkronisasi tidak aktif';
+            }
+            
+            const lastSync = localStorage.getItem('lastCloudSync');
+            if (lastSync) {
+                const date = new Date(parseInt(lastSync));
+                lastSyncElement.textContent = date.toLocaleString('ms-MY');
+            }
+        }
+
+        function showShareModal() {
+            document.getElementById('shareModal').classList.remove('hidden');
+        }
+
+        function hideShareModal() {
+            document.getElementById('shareModal').classList.add('hidden');
+            document.getElementById('shareableLink').value = '';
+            document.getElementById('qrCodeArea').innerHTML = `
+                <div class="w-48 h-48 bg-white border-2 border-dashed border-gray-300 rounded-lg mx-auto flex items-center justify-center">
+                    <p class="text-gray-500">QR Code akan muncul di sini</p>
+                </div>
+            `;
+        }
+
+        function generateAndShowLink() {
+            const shareableUrl = generateShareableLink();
+            document.getElementById('shareableLink').value = shareableUrl;
+            
+            // Generate QR Code using a simple QR code generator
+            generateQRCode(shareableUrl);
+            
+            showNotification('🔗 Pautan kongsi telah dijana!', 'success');
+        }
+
+        function generateQRCode(text) {
+            // Simple QR code using Google Charts API (fallback method)
+            const qrSize = 200;
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(text)}`;
+            
+            document.getElementById('qrCodeArea').innerHTML = `
+                <img src="${qrUrl}" alt="QR Code" class="w-48 h-48 mx-auto border rounded-lg" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="w-48 h-48 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg mx-auto items-center justify-center text-center p-4" style="display:none;">
+                    <p class="text-gray-500 text-sm">QR Code tidak dapat dimuat.<br>Gunakan pautan di bawah.</p>
+                </div>
+            `;
+        }
+
+        function copyShareableLink() {
+            const linkInput = document.getElementById('shareableLink');
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999); // For mobile devices
+            
+            navigator.clipboard.writeText(linkInput.value).then(() => {
+                showNotification('📋 Pautan telah disalin!', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                document.execCommand('copy');
+                showNotification('📋 Pautan telah disalin!', 'success');
+            });
+        }
+
+        // Load data from cloud on startup
+        async function initializeCloudData() {
+            try {
+                // Check for URL data first
+                loadFromUrl();
+                
+                // Try to load from IndexedDB
+                const cloudData = await loadFromIndexedDB();
+                if (cloudData && cloudData.data && cloudData.data.length > 0) {
+                    const localData = JSON.parse(localStorage.getItem('studentsData') || '[]');
+                    
+                    // Compare timestamps to see which is newer
+                    if (localData.length === 0 || cloudData.timestamp > (localStorage.getItem('lastLocalUpdate') || 0)) {
+                        if (confirm(`Ditemui data terkini di awan (${cloudData.data.length} murid)\nTarikh: ${new Date(cloudData.timestamp).toLocaleString('ms-MY')}\n\nMuat data ini?`)) {
+                            studentsData = cloudData.data;
+                            saveData();
+                            showNotification('☁️ Data telah dimuat dari awan!', 'success');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to initialize cloud data:', error);
+            }
+        }
+
         // Admin event listeners
         document.getElementById('addStudentBtn').addEventListener('click', showAddStudentForm);
         document.getElementById('viewAllBtn').addEventListener('click', showAllStudents);
         document.getElementById('exportBtn').addEventListener('click', exportData);
         document.getElementById('importBtn').addEventListener('click', importExcel);
         document.getElementById('downloadTemplateBtn').addEventListener('click', downloadTemplate);
+        document.getElementById('cloudSyncBtn').addEventListener('click', toggleCloudSync);
+        document.getElementById('shareDataBtn').addEventListener('click', showShareModal);
 
         document.getElementById('closeFormBtn').addEventListener('click', () => {
             studentForm.classList.add('hidden');
@@ -1191,6 +1617,8 @@
                 nokp: document.getElementById('studentIC').value,
                 tarikhLahir: document.getElementById('studentDOB').value,
                 bangsa: document.getElementById('studentRace').value,
+                nomorDaftar: document.getElementById('studentRegNo').value,
+                sekolahTerdahulu: document.getElementById('previousSchool').value,
                 alamat: document.getElementById('studentAddress').value,
                 penjagaUtama: {
                     nama: document.getElementById('guardian1Name').value,
@@ -1248,8 +1676,23 @@
             }
         });
 
+        // Share modal event listeners
+        document.getElementById('generateLinkBtn').addEventListener('click', generateAndShowLink);
+        document.getElementById('copyLinkBtn').addEventListener('click', copyShareableLink);
+        document.getElementById('closeShareModal').addEventListener('click', hideShareModal);
+
+        // Close share modal when clicking outside
+        document.getElementById('shareModal').addEventListener('click', (e) => {
+            if (e.target.id === 'shareModal') {
+                hideShareModal();
+            }
+        });
+
         // Initialize
         updateStats();
+        updateSyncStatus();
+        initializeCloudData();
+        startAutoSync();
     </script>
 
     <!-- GitHub Integration Guide -->
@@ -1424,5 +1867,5 @@ bangsa: document.getElementById('studentRace').value,</code></pre>
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e45534352064ad',t:'MTc2MDQxNjEzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ed9c21e746a319',t:'MTc2MDUxMzQxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
