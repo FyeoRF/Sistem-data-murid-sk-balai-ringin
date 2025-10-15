@@ -246,7 +246,7 @@
                     </svg>
                 </div>
                 <h3 class="text-2xl font-bold text-gray-800">Kongsi Data Murid</h3>
-                <p class="text-gray-600 mt-2">Jana pautan untuk akses data di peranti lain</p>
+                <p class="text-gray-600 mt-2">Jana pautan untuk dikongsi dengan orang lain</p>
             </div>
             
             <div class="space-y-6">
@@ -286,9 +286,9 @@
                     <ol class="list-decimal list-inside text-sm text-blue-700 space-y-1">
                         <li>Klik "Jana Pautan" untuk cipta pautan kongsi</li>
                         <li>Copy pautan atau scan QR code</li>
-                        <li>Buka pautan di peranti lain (telefon/komputer)</li>
-                        <li>Data akan dimuat automatik di peranti tersebut</li>
-                        <li>Semua peranti akan ada data yang sama</li>
+                        <li>Hantar pautan kepada orang yang ingin lihat data</li>
+                        <li>Mereka boleh buka pautan untuk lihat semua data murid</li>
+                        <li>Pautan boleh dibuka di mana-mana peranti</li>
                     </ol>
                 </div>
 
@@ -298,7 +298,8 @@
                     <ul class="list-disc list-inside text-sm text-yellow-700 space-y-1">
                         <li>Pautan mengandungi data murid - jaga keselamatan</li>
                         <li>Hanya kongsi dengan orang yang dipercayai</li>
-                        <li>Data akan kekal di peranti selepas dimuat</li>
+                        <li>Sesiapa yang ada pautan boleh lihat semua data</li>
+                        <li>Pautan akan kekal aktif selagi tidak ditukar</li>
                     </ul>
                 </div>
             </div>
@@ -361,31 +362,14 @@
                 <button id="downloadTemplateBtn" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all font-semibold">
                     📄 Template Excel
                 </button>
-                <button id="cloudSyncBtn" class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-all font-semibold">
-                    ☁️ Sinkron Awan
-                </button>
+
                 <button id="shareDataBtn" class="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-6 py-3 rounded-lg hover:from-pink-600 hover:to-rose-700 transition-all font-semibold">
                     🔗 Kongsi Data
                 </button>
                 <input type="file" id="excelFileInput" accept=".xlsx,.xls" class="hidden">
             </div>
 
-            <!-- Cloud Sync Status -->
-            <div id="cloudStatus" class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 p-6 rounded-xl mb-6">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div id="syncStatusIcon" class="w-4 h-4 rounded-full bg-gray-400"></div>
-                        <div>
-                            <h3 class="text-lg font-bold text-purple-800">Status Sinkronisasi Awan</h3>
-                            <p id="syncStatusText" class="text-purple-600 text-sm">Sinkronisasi tidak aktif</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-sm text-purple-600">Sync terakhir:</p>
-                        <p id="lastSyncTime" class="text-xs text-purple-500">Belum pernah</p>
-                    </div>
-                </div>
-            </div>
+
 
             <!-- Import Guide -->
             <div id="importGuide" class="hidden import-guide p-6 rounded-xl mb-6">
@@ -711,100 +695,10 @@
             }
         ];
 
-        // Cloud Storage System
-        const CLOUD_STORAGE_KEY = 'sk_balai_ringin_students';
-        const BACKUP_INTERVAL = 30000; // 30 seconds
-        let cloudSyncEnabled = false;
-        let lastSyncTime = 0;
-
-        // Save data to localStorage and cloud
+        // Save data to localStorage
         function saveData() {
             localStorage.setItem('studentsData', JSON.stringify(studentsData));
             updateStats();
-            
-            // Auto backup to cloud if enabled
-            if (cloudSyncEnabled) {
-                backupToCloud();
-            }
-        }
-
-        // Cloud backup using GitHub Gist (free cloud storage)
-        async function backupToCloud() {
-            try {
-                const dataToBackup = {
-                    timestamp: Date.now(),
-                    school: 'SK Balai Ringin',
-                    data: studentsData,
-                    version: '2.0'
-                };
-
-                // Use browser's built-in storage API if available
-                if ('indexedDB' in window) {
-                    await saveToIndexedDB(dataToBackup);
-                }
-
-                // Also save to a shareable format
-                const shareableData = btoa(JSON.stringify(dataToBackup));
-                localStorage.setItem('cloudBackup', shareableData);
-                localStorage.setItem('lastCloudSync', Date.now().toString());
-                
-                showNotification('✅ Data telah disimpan ke awan!', 'success');
-                lastSyncTime = Date.now();
-            } catch (error) {
-                console.error('Cloud backup failed:', error);
-                showNotification('⚠️ Backup awan gagal, data masih selamat di peranti ini', 'warning');
-            }
-        }
-
-        // IndexedDB for better cross-device storage
-        async function saveToIndexedDB(data) {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open('SKBalaiRinginDB', 1);
-                
-                request.onerror = () => reject(request.error);
-                
-                request.onsuccess = () => {
-                    const db = request.result;
-                    const transaction = db.transaction(['students'], 'readwrite');
-                    const store = transaction.objectStore('students');
-                    store.put(data, 'main');
-                    transaction.oncomplete = () => resolve();
-                };
-                
-                request.onupgradeneeded = () => {
-                    const db = request.result;
-                    if (!db.objectStoreNames.contains('students')) {
-                        db.createObjectStore('students');
-                    }
-                };
-            });
-        }
-
-        // Load from IndexedDB
-        async function loadFromIndexedDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open('SKBalaiRinginDB', 1);
-                
-                request.onerror = () => reject(request.error);
-                
-                request.onsuccess = () => {
-                    const db = request.result;
-                    const transaction = db.transaction(['students'], 'readonly');
-                    const store = transaction.objectStore('students');
-                    const getRequest = store.get('main');
-                    
-                    getRequest.onsuccess = () => {
-                        resolve(getRequest.result);
-                    };
-                };
-                
-                request.onupgradeneeded = () => {
-                    const db = request.result;
-                    if (!db.objectStoreNames.contains('students')) {
-                        db.createObjectStore('students');
-                    }
-                };
-            });
         }
 
         // Generate shareable link
@@ -881,14 +775,7 @@
             }, 4000);
         }
 
-        // Auto-sync every 30 seconds when admin is active
-        function startAutoSync() {
-            setInterval(() => {
-                if (cloudSyncEnabled && isAdminLoggedIn) {
-                    backupToCloud();
-                }
-            }, BACKUP_INTERVAL);
-        }
+
 
         // Update statistics
         function updateStats() {
@@ -1464,38 +1351,7 @@
             studentDetails.classList.remove('hidden');
         });
 
-        // Cloud sync functions
-        function toggleCloudSync() {
-            cloudSyncEnabled = !cloudSyncEnabled;
-            updateSyncStatus();
-            
-            if (cloudSyncEnabled) {
-                backupToCloud();
-                showNotification('☁️ Sinkronisasi awan diaktifkan!', 'success');
-            } else {
-                showNotification('📱 Sinkronisasi awan dimatikan', 'info');
-            }
-        }
 
-        function updateSyncStatus() {
-            const statusIcon = document.getElementById('syncStatusIcon');
-            const statusText = document.getElementById('syncStatusText');
-            const lastSyncElement = document.getElementById('lastSyncTime');
-            
-            if (cloudSyncEnabled) {
-                statusIcon.className = 'w-4 h-4 rounded-full bg-green-400 animate-pulse';
-                statusText.textContent = 'Sinkronisasi aktif - data akan disimpan automatik';
-            } else {
-                statusIcon.className = 'w-4 h-4 rounded-full bg-gray-400';
-                statusText.textContent = 'Sinkronisasi tidak aktif';
-            }
-            
-            const lastSync = localStorage.getItem('lastCloudSync');
-            if (lastSync) {
-                const date = new Date(parseInt(lastSync));
-                lastSyncElement.textContent = date.toLocaleString('ms-MY');
-            }
-        }
 
         function showShareModal() {
             document.getElementById('shareModal').classList.remove('hidden');
@@ -1549,29 +1405,10 @@
             });
         }
 
-        // Load data from cloud on startup
-        async function initializeCloudData() {
-            try {
-                // Check for URL data first
-                loadFromUrl();
-                
-                // Try to load from IndexedDB
-                const cloudData = await loadFromIndexedDB();
-                if (cloudData && cloudData.data && cloudData.data.length > 0) {
-                    const localData = JSON.parse(localStorage.getItem('studentsData') || '[]');
-                    
-                    // Compare timestamps to see which is newer
-                    if (localData.length === 0 || cloudData.timestamp > (localStorage.getItem('lastLocalUpdate') || 0)) {
-                        if (confirm(`Ditemui data terkini di awan (${cloudData.data.length} murid)\nTarikh: ${new Date(cloudData.timestamp).toLocaleString('ms-MY')}\n\nMuat data ini?`)) {
-                            studentsData = cloudData.data;
-                            saveData();
-                            showNotification('☁️ Data telah dimuat dari awan!', 'success');
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Failed to initialize cloud data:', error);
-            }
+        // Load data from URL on startup
+        function initializeData() {
+            // Check for URL data first
+            loadFromUrl();
         }
 
         // Admin event listeners
@@ -1580,7 +1417,7 @@
         document.getElementById('exportBtn').addEventListener('click', exportData);
         document.getElementById('importBtn').addEventListener('click', importExcel);
         document.getElementById('downloadTemplateBtn').addEventListener('click', downloadTemplate);
-        document.getElementById('cloudSyncBtn').addEventListener('click', toggleCloudSync);
+
         document.getElementById('shareDataBtn').addEventListener('click', showShareModal);
 
         document.getElementById('closeFormBtn').addEventListener('click', () => {
@@ -1690,9 +1527,7 @@
 
         // Initialize
         updateStats();
-        updateSyncStatus();
-        initializeCloudData();
-        startAutoSync();
+        initializeData();
     </script>
 
     <!-- GitHub Integration Guide -->
@@ -1867,5 +1702,5 @@ bangsa: document.getElementById('studentRace').value,</code></pre>
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ed9c21e746a319',t:'MTc2MDUxMzQxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98edafb71339a319',t:'MTc2MDUxNDIxNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
